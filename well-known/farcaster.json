@@ -14,7 +14,7 @@
     "buttonTitle": "Open App",
     "splashImageUrl": "https://arcflow-router.vercel.app/logo.png",
     "splashBackgroundColor": "#0b0f1a",
-    "primaryCategory": "defi",
+    "primaryCategory": "finance",
     "webhookUrl": "https://arcflow-router.vercel.app/api/webhook"
   }
 }
