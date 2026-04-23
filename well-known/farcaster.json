@@ -1,20 +1,19 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjY3NDUwNiwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDYxOUVCZTAyYzM5MGREMjAwMTcxN0RhMEI5MjQxMGMwMkMzYjhmNUQifQ",
-    "payload": "eyJkb21haW4iOiJhcmNmbG93LXJvdXRlcmRhcHAudmVyY2VsLmFwcCJ9",
-    "signature": "18i9usrAdM9GB29AxHqwPP2aPmA3HOc2QlnI4GCT8Pt4PBIzmhziCK42uRrY2bg28beR70rUE0Q/h+u2EbR3tBs="
+    "header": "eyJmaWQiOjgxNzIwMCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDI4NzEzODVkZjFGYjU1ZkM5RmQwQUJFMjk0ODFGNjk1MTI0NTU1NUMyIn0",
+    "payload": "eyJkb21haW4iOiJhcmNmbG93LXJvdXRlci52ZXJjZWwuYXBwIn0",
+    "signature": "yNg178WvStCW15/1v9ov67PKMUIDoZm2JpJDHxxSeqQoRe+z6P3UjrpYJmRWsftGfkghV9YavqjQFBRZ70iaJhs="
   },
   "frame": {
     "version": "1",
-    "name": "ArcFlow Router",
-    "description": "ArcFlow Router dApp on Arc Testnet with native USDC support",
-    "iconUrl": "https://arcflow-routerdapp.vercel.app/icon.png",
-    "homeUrl": "https://arcflow-routerdapp.vercel.app",
-    "imageUrl": "https://arcflow-routerdapp.vercel.app/image.png",
-    "buttonTitle": "Open ArcFlow",
-    "splashImageUrl": "https://arcflow-routerdapp.vercel.app/splash.png",
-    "splashBackgroundColor": "#eeccff",
-    "webhookUrl": "https://arcflow-routerdapp.vercel.app/api/webhook",
+    "name": "ArcFlow Pro",
+    "description": "ArcFlow Pro dApp on Arc Testnet",
+    "iconUrl": "https://arcflow-router.vercel.app/logo.png",
+    "homeUrl": "https://arcflow-router.vercel.app",
+    "imageUrl": "https://arcflow-router.vercel.app/frame.png",
+    "buttonTitle": "Open App",
+    "splashImageUrl": "https://arcflow-router.vercel.app/logo.png",
+    "splashBackgroundColor": "#0b0f1a",
     "primaryCategory": "defi"
   }
 }
