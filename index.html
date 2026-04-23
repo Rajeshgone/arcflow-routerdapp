@@ -1,254 +1,232 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcflow - Router DApp</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.min.js"></script>
-    <style>
-        body {
-            background: linear-gradient(135deg, #0f172a, #1e2937);
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Browser tab title -->
+
+<title>ArcFlow</title>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.10.0/dist/ethers.umd.min.js"></script>
+
+<script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b1220;
+  color: #fff;
+}
+.container {
+  max-width: 500px;
+  margin: auto;
+  padding: 16px;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  font-size: 15px;
+}
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+}
+.card {
+  background: #121a2f;
+  padding: 14px;
+  border-radius: 10px;
+  margin-top: 14px;
+}
+small {
+  color: #9aa4c7;
+  word-break: break-all;
+}
+</style>
+
 </head>
-<body class="min-h-screen text-white font-sans">
-    <div class="max-w-md mx-auto pt-8 px-4">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-8">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
-                <h1 class="text-3xl font-bold">Arcflow</h1>
-            </div>
-            <button id="connectWallet" 
-                    class="px-6 py-2 bg-white text-black font-semibold rounded-2xl hover:bg-gray-200 transition">
-                Connect Wallet
-            </button>
-        </div>
 
-        <!-- Swap Card -->
-        <div class="glass border border-white/10 rounded-3xl p-6 shadow-2xl">
-            <h2 class="text-xl font-semibold mb-6 text-center">Swap Tokens on Arcflow</h2>
+<body>
+<div class="container">
 
-            <!-- From -->
-            <div class="bg-slate-900/50 rounded-2xl p-4 mb-3">
-                <div class="flex justify-between text-sm mb-3">
-                    <span class="text-gray-400">You pay</span>
-                    <span id="balanceFrom" class="text-gray-400">Balance: 0.00</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <input id="amountFrom" 
-                           type="text" 
-                           placeholder="0.0"
-                           class="bg-transparent text-3xl font-medium outline-none w-full">
-                    <div onclick="selectToken('from')" 
-                         id="tokenFrom"
-                         class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 cursor-pointer rounded-2xl px-4 py-2">
-                        <span class="text-2xl">ETH</span>
-                        <span class="text-sm font-medium">ETH</span>
-                        ▼
-                    </div>
-                </div>
-            </div>
+<!-- Visible app title -->
 
-            <!-- Swap Arrow -->
-            <div class="flex justify-center -my-3 relative z-10">
-                <button onclick="swapTokens()" 
-                        class="w-10 h-10 bg-slate-800 hover:bg-slate-700 border-4 border-slate-900 rounded-2xl flex items-center justify-center transition">
-                    ↓
-                </button>
-            </div>
+<h1>ArcFlow</h1>
 
-            <!-- To -->
-            <div class="bg-slate-900/50 rounded-2xl p-4 mt-3">
-                <div class="flex justify-between text-sm mb-3">
-                    <span class="text-gray-400">You receive</span>
-                    <span id="balanceTo" class="text-gray-400">Balance: 0.00</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <input id="amountTo" 
-                           type="text" 
-                           placeholder="0.0"
-                           class="bg-transparent text-3xl font-medium outline-none w-full">
-                    <div onclick="selectToken('to')" 
-                         id="tokenTo"
-                         class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 cursor-pointer rounded-2xl px-4 py-2">
-                        <span class="text-2xl">USDC</span>
-                        <span class="text-sm font-medium">USDC</span>
-                        ▼
-                    </div>
-                </div>
-            </div>
+<button onclick="connectInjected()">Connect Wallet</button> <button onclick="connectWC()">WalletConnect</button>
 
-            <!-- Rate -->
-            <div class="text-xs text-gray-400 mt-4 flex justify-between items-center">
-                <span>1 ETH ≈ 2,450 USDC</span>
-                <span class="cursor-pointer hover:text-white" onclick="refreshRate()">⟳</span>
-            </div>
+<div class="card">
+  <div><b>Address</b><br><small id="addr">-</small></div>
+  <div style="margin-top:8px;">
+    <b>Balance (USDC native)</b><br>
+    <span id="bal">-</span>
+  </div>
+</div>
 
-            <!-- Swap Button -->
-            <button onclick="executeSwap()" 
-                    class="w-full mt-8 bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-600 hover:to-fuchsia-700 py-4 rounded-2xl font-bold text-lg transition">
-                Swap on Arcflow
-            </button>
+<div class="card">
+  <h3>Send</h3>
+  <input id="to" placeholder="Recipient address">
+  <input id="amount" placeholder="Amount (USDC)">
+  <button onclick="sendTx()">Send Transaction</button>
+</div>
 
-            <!-- Info -->
-            <div class="mt-4 text-center text-xs text-gray-500 space-y-1">
-                <div>Router Fee: <span class="text-emerald-400">0.3%</span></div>
-                <div id="status" class="text-amber-400"></div>
-            </div>
-        </div>
+<div class="card">
+  <h3>History</h3>
+  <div id="history"></div>
+</div>
 
-        <!-- Footer Info -->
-        <div class="text-center text-xs text-gray-500 mt-8">
-            Arcflow • Decentralized Token Router<br>
-            <span class="text-gray-600">Fast • Secure • Low Slippage</span>
-        </div>
+</div>
+
+<script>
+
+const ARC_CHAIN = {
+  chainId: "0x66eee",
+  chainName: "Arc Testnet",
+  rpcUrls: ["https://rpc.arc.xyz"],
+  nativeCurrency: {
+    name: "USDC",
+    symbol: "USDC",
+    decimals: 6
+  }
+};
+
+const WC_PROJECT_ID = "YOUR_PROJECT_ID";
+
+let provider, signer, address;
+
+async function connectInjected() {
+  if (!window.ethereum) return alert("No wallet found");
+
+  provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = await provider.getSigner();
+  address = await signer.getAddress();
+
+  await switchNetwork();
+  initEvents();
+  updateUI();
+}
+
+async function connectWC() {
+  const wc = await window.EthereumProvider.init({
+    projectId: WC_PROJECT_ID,
+    chains: [421614],
+    showQrModal: true
+  });
+
+  await wc.connect();
+
+  provider = new ethers.BrowserProvider(wc);
+  signer = await provider.getSigner();
+  address = await signer.getAddress();
+
+  initEvents();
+  updateUI();
+}
+
+async function switchNetwork() {
+  try {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: ARC_CHAIN.chainId }]
+    });
+  } catch {
+    await window.ethereum.request({
+      method: "wallet_addEthereumChain",
+      params: [ARC_CHAIN]
+    });
+  }
+}
+
+async function updateUI() {
+  document.getElementById("addr").innerText = address || "-";
+
+  if (!provider || !address) return;
+
+  const bal = await provider.getBalance(address);
+  const formatted = Number(ethers.formatUnits(bal, 6)).toFixed(4);
+
+  document.getElementById("bal").innerText = formatted;
+
+  renderHistory();
+}
+
+async function sendTx() {
+  const to = document.getElementById("to").value.trim();
+  const amount = document.getElementById("amount").value.trim();
+
+  if (!to || !amount) return alert("Fill all fields");
+
+  try {
+    const tx = await signer.sendTransaction({
+      to,
+      value: ethers.parseUnits(amount, 6)
+    });
+
+    saveTx({
+      hash: tx.hash,
+      to,
+      amount,
+      time: Date.now()
+    });
+
+    alert("Tx sent:\n" + tx.hash);
+    updateUI();
+
+  } catch (e) {
+    console.error(e);
+    alert("Transaction failed");
+  }
+}
+
+function saveTx(tx) {
+  const list = JSON.parse(localStorage.getItem("arc_history") || "[]");
+  list.unshift(tx);
+  localStorage.setItem("arc_history", JSON.stringify(list));
+}
+
+function renderHistory() {
+  const el = document.getElementById("history");
+  const list = JSON.parse(localStorage.getItem("arc_history") || "[]");
+
+  if (!list.length) {
+    el.innerHTML = "<small>No transactions yet</small>";
+    return;
+  }
+
+  el.innerHTML = list.map(tx => `
+    <div style="margin-bottom:10px;">
+      <small>${new Date(tx.time).toLocaleString()}</small><br>
+      ${tx.amount} → ${tx.to}<br>
+      <small>${tx.hash}</small>
     </div>
+  `).join("");
+}
 
-    <!-- Token Selector Modal -->
-    <div id="tokenModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center">
-        <div class="glass border border-white/10 rounded-3xl w-full max-w-sm mx-4 p-6">
-            <h3 class="text-lg font-semibold mb-4">Select Token</h3>
-            <div class="space-y-2 max-h-80 overflow-auto">
-                <div onclick="chooseToken('ETH')" class="flex items-center gap-4 p-3 hover:bg-white/10 rounded-2xl cursor-pointer">
-                    <span class="text-3xl">⛓️</span>
-                    <div>
-                        <div class="font-medium">Ethereum</div>
-                        <div class="text-sm text-gray-400">ETH</div>
-                    </div>
-                </div>
-                <div onclick="chooseToken('USDC')" class="flex items-center gap-4 p-3 hover:bg-white/10 rounded-2xl cursor-pointer">
-                    <span class="text-3xl">💵</span>
-                    <div>
-                        <div class="font-medium">USD Coin</div>
-                        <div class="text-sm text-gray-400">USDC</div>
-                    </div>
-                </div>
-                <div onclick="chooseToken('DAI')" class="flex items-center gap-4 p-3 hover:bg-white/10 rounded-2xl cursor-pointer">
-                    <span class="text-3xl">🔶</span>
-                    <div>
-                        <div class="font-medium">Dai Stablecoin</div>
-                        <div class="text-sm text-gray-400">DAI</div>
-                    </div>
-                </div>
-            </div>
-            <button onclick="closeModal()" 
-                    class="w-full mt-6 py-3 text-gray-400 hover:text-white border border-white/20 rounded-2xl">
-                Cancel
-            </button>
-        </div>
-    </div>
+function initEvents() {
+  if (window.ethereum) {
+    window.ethereum.on("accountsChanged", () => location.reload());
+    window.ethereum.on("chainChanged", () => location.reload());
+  }
+}
 
-    <script>
-        let provider;
-        let signer;
-        let fromToken = "ETH";
-        let toToken = "USDC";
+renderHistory();
 
-        const connectWalletBtn = document.getElementById('connectWallet');
-        const statusEl = document.getElementById('status');
+</script>
 
-        async function connectWallet() {
-            if (typeof window.ethereum !== "undefined") {
-                try {
-                    provider = new ethers.BrowserProvider(window.ethereum);
-                    await provider.send("eth_requestAccounts", []);
-                    signer = await provider.getSigner();
-                    const address = await signer.getAddress();
-                    connectWalletBtn.textContent = `${address.slice(0,6)}...${address.slice(-4)}`;
-                    statusEl.textContent = "Wallet connected ✓";
-                } catch (error) {
-                    console.error(error);
-                    statusEl.textContent = "Connection failed";
-                }
-            } else {
-                alert("Please install MetaMask!");
-            }
-        }
-
-        function selectToken(side) {
-            window.currentSide = side;
-            document.getElementById('tokenModal').classList.remove('hidden');
-        }
-
-        function chooseToken(token) {
-            if (window.currentSide === 'from') {
-                fromToken = token;
-                document.getElementById('tokenFrom').innerHTML = `
-                    <span class="text-2xl">${getTokenEmoji(token)}</span>
-                    <span class="text-sm font-medium">${token}</span> ▼
-                `;
-            } else {
-                toToken = token;
-                document.getElementById('tokenTo').innerHTML = `
-                    <span class="text-2xl">${getTokenEmoji(token)}</span>
-                    <span class="text-sm font-medium">${token}</span> ▼
-                `;
-            }
-            closeModal();
-        }
-
-        function getTokenEmoji(token) {
-            if (token === 'ETH') return '⛓️';
-            if (token === 'USDC') return '💵';
-            if (token === 'DAI') return '🔶';
-            return '🪙';
-        }
-
-        function closeModal() {
-            document.getElementById('tokenModal').classList.add('hidden');
-        }
-
-        function swapTokens() {
-            const tempToken = fromToken;
-            const tempAmount = document.getElementById('amountFrom').value;
-            
-            fromToken = toToken;
-            toToken = tempToken;
-            
-            document.getElementById('amountFrom').value = document.getElementById('amountTo').value || '0';
-            document.getElementById('amountTo').value = tempAmount || '0';
-            
-            document.getElementById('tokenFrom').innerHTML = `
-                <span class="text-2xl">${getTokenEmoji(fromToken)}</span>
-                <span class="text-sm font-medium">${fromToken}</span> ▼
-            `;
-            document.getElementById('tokenTo').innerHTML = `
-                <span class="text-2xl">${getTokenEmoji(toToken)}</span>
-                <span class="text-sm font-medium">${toToken}</span> ▼
-            `;
-        }
-
-        async function executeSwap() {
-            const amount = document.getElementById('amountFrom').value;
-            if (!amount || amount === '0') {
-                alert("Enter amount to swap");
-                return;
-            }
-            if (!signer) {
-                alert("Please connect wallet first");
-                return;
-            }
-            
-            statusEl.textContent = "Routing through Arcflow...";
-            
-            // Mock transaction
-            setTimeout(() => {
-                statusEl.innerHTML = `✅ Successfully swapped ${amount} ${fromToken} to ${toToken} via Arcflow`;
-            }, 1800);
-        }
-
-        function refreshRate() {
-            statusEl.textContent = "Rate updated";
-            setTimeout(() => statusEl.textContent = "", 1500);
-        }
-
-        window.ethereum?.on('accountsChanged', () => window.location.reload());
-    </script>
 </body>
 </html>
