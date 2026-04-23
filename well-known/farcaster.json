@@ -1,8 +1,8 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjgxNzIwMCwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDI4NzEzODVkZjFGYjU1ZkM5RmQwQUJFMjk0ODFGNjk1MTI0NTU1NUMyIn0",
-    "payload": "eyJkb21haW4iOiJhcmNmbG93LXJvdXRlci52ZXJjZWwuYXBwIn0",
-    "signature": "yNg178WvStCW15/1v9ov67PKMUIDoZm2JpJDHxxSeqQoRe+z6P3UjrpYJmRWsftGfkghV9YavqjQFBRZ70iaJhs="
+    "header": "REPLACE_WITH_BASE64_HEADER",
+    "payload": "REPLACE_WITH_BASE64_PAYLOAD",
+    "signature": "REPLACE_WITH_BASE64_SIGNATURE"
   },
   "frame": {
     "version": "1",
@@ -14,6 +14,7 @@
     "buttonTitle": "Open App",
     "splashImageUrl": "https://arcflow-router.vercel.app/logo.png",
     "splashBackgroundColor": "#0b0f1a",
-    "primaryCategory": "defi"
+    "primaryCategory": "defi",
+    "webhookUrl": "https://arcflow-router.vercel.app/api/webhook"
   }
 }
