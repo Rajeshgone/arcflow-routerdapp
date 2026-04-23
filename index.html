@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Browser tab title -->
-
 <title>ArcFlow</title>
 
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.10.0/dist/ethers.umd.min.js"></script>
-
 <script src="https://unpkg.com/@walletconnect/ethereum-provider@2.11.0/dist/index.umd.js"></script>
 
 <style>
@@ -27,7 +22,6 @@ body {
 }
 h1 {
   text-align: center;
-  margin-bottom: 10px;
 }
 button {
   width: 100%;
@@ -56,6 +50,7 @@ small {
   color: #9aa4c7;
   word-break: break-all;
 }
+a { color:#60a5fa; text-decoration:none; }
 </style>
 
 </head>
@@ -63,16 +58,18 @@ small {
 <body>
 <div class="container">
 
-<!-- Visible app title -->
-
 <h1>ArcFlow</h1>
 
-<button onclick="connectInjected()">Connect Wallet</button> <button onclick="connectWC()">WalletConnect</button>
+<button onclick="connectInjected()">Connect Wallet</button>
+<button onclick="connectWC()">WalletConnect</button>
+<button onclick="window.open('https://faucet.circle.com')">Get Test USDC</button>
 
 <div class="card">
-  <div><b>Address</b><br><small id="addr">-</small></div>
-  <div style="margin-top:8px;">
-    <b>Balance (USDC native)</b><br>
+  <b>Address</b><br>
+  <small id="addr">-</small>
+
+  <div style="margin-top:10px;">
+    <b>Balance (USDC)</b><br>
     <span id="bal">-</span>
   </div>
 </div>
@@ -93,38 +90,50 @@ small {
 
 <script>
 
+const DECIMALS = 18;
+const EXPLORER = "https://testnet.arcscan.app/tx/";
+
 const ARC_CHAIN = {
-  chainId: "0x66eee",
+  chainId: "0x4CE3F2",
   chainName: "Arc Testnet",
-  rpcUrls: ["https://rpc.arc.xyz"],
+  rpcUrls: [
+    "https://rpc.testnet.arc.network",
+    "https://rpc.blockdaemon.testnet.arc.network",
+    "https://rpc.drpc.testnet.arc.network",
+    "https://rpc.quicknode.testnet.arc.network"
+  ],
   nativeCurrency: {
     name: "USDC",
     symbol: "USDC",
-    decimals: 6
-  }
+    decimals: 18
+  },
+  blockExplorerUrls: ["https://testnet.arcscan.app"]
 };
 
-const WC_PROJECT_ID = "YOUR_PROJECT_ID";
+const WC_PROJECT_ID = "REPLACE_WITH_YOUR_PROJECT_ID";
 
 let provider, signer, address;
 
+/* ---------- CONNECT INJECTED ---------- */
 async function connectInjected() {
   if (!window.ethereum) return alert("No wallet found");
 
   provider = new ethers.BrowserProvider(window.ethereum);
+
   await provider.send("eth_requestAccounts", []);
   signer = await provider.getSigner();
   address = await signer.getAddress();
 
-  await switchNetwork();
+  await ensureNetwork();
   initEvents();
   updateUI();
 }
 
+/* ---------- WALLETCONNECT ---------- */
 async function connectWC() {
   const wc = await window.EthereumProvider.init({
     projectId: WC_PROJECT_ID,
-    chains: [421614],
+    chains: [5042002],
     showQrModal: true
   });
 
@@ -134,48 +143,67 @@ async function connectWC() {
   signer = await provider.getSigner();
   address = await signer.getAddress();
 
+  try {
+    await wc.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: ARC_CHAIN.chainId }]
+    });
+  } catch {}
+
   initEvents();
   updateUI();
 }
 
-async function switchNetwork() {
-  try {
-    await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: ARC_CHAIN.chainId }]
-    });
-  } catch {
-    await window.ethereum.request({
-      method: "wallet_addEthereumChain",
-      params: [ARC_CHAIN]
-    });
+/* ---------- NETWORK ---------- */
+async function ensureNetwork() {
+  const net = await provider.getNetwork();
+
+  if (Number(net.chainId) !== 5042002) {
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: ARC_CHAIN.chainId }]
+      });
+    } catch {
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [ARC_CHAIN]
+      });
+    }
   }
 }
 
+/* ---------- UI ---------- */
 async function updateUI() {
   document.getElementById("addr").innerText = address || "-";
 
   if (!provider || !address) return;
 
   const bal = await provider.getBalance(address);
-  const formatted = Number(ethers.formatUnits(bal, 6)).toFixed(4);
+  const formatted = Number(ethers.formatUnits(bal, DECIMALS)).toFixed(4);
 
   document.getElementById("bal").innerText = formatted;
 
   renderHistory();
 }
 
+/* ---------- SEND TX ---------- */
 async function sendTx() {
   const to = document.getElementById("to").value.trim();
   const amount = document.getElementById("amount").value.trim();
 
   if (!to || !amount) return alert("Fill all fields");
+  if (!ethers.isAddress(to)) return alert("Invalid address");
 
   try {
     const tx = await signer.sendTransaction({
       to,
-      value: ethers.parseUnits(amount, 6)
+      value: ethers.parseUnits(amount, DECIMALS)
     });
+
+    alert("Tx sent:\n" + tx.hash);
+
+    await tx.wait();
 
     saveTx({
       hash: tx.hash,
@@ -184,15 +212,15 @@ async function sendTx() {
       time: Date.now()
     });
 
-    alert("Tx sent:\n" + tx.hash);
     updateUI();
 
   } catch (e) {
     console.error(e);
-    alert("Transaction failed");
+    alert(e.reason || e.message || "Transaction failed");
   }
 }
 
+/* ---------- HISTORY ---------- */
 function saveTx(tx) {
   const list = JSON.parse(localStorage.getItem("arc_history") || "[]");
   list.unshift(tx);
@@ -212,11 +240,14 @@ function renderHistory() {
     <div style="margin-bottom:10px;">
       <small>${new Date(tx.time).toLocaleString()}</small><br>
       ${tx.amount} → ${tx.to}<br>
-      <small>${tx.hash}</small>
+      <a href="${EXPLORER}${tx.hash}" target="_blank">
+        <small>${tx.hash}</small>
+      </a>
     </div>
   `).join("");
 }
 
+/* ---------- EVENTS ---------- */
 function initEvents() {
   if (window.ethereum) {
     window.ethereum.on("accountsChanged", () => location.reload());
