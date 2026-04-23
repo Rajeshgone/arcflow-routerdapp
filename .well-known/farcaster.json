@@ -1,20 +1,20 @@
 {
   "accountAssociation": {
-    "header": "BASE64_HEADER",
-    "payload": "BASE64_PAYLOAD",
-    "signature": "BASE64_SIGNATURE"
+    "header": "eyJmaWQiOjY3NDUwNiwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDYxOUVCZTAyYzM5MGREMjAwMTcxN0RhMEI5MjQxMGMwMkMzYjhmNUQifQ",
+    "payload": "eyJkb21haW4iOiJhcmNmbG93LXJvdXRlcmRhcHAudmVyY2VsLmFwcCJ9",
+    "signature": "18i9usrAdM9GB29AxHqwPP2aPmA3HOc2QlnI4GCT8Pt4PBIzmhziCK42uRrY2bg28beR70rUE0Q/h+u2EbR3tBs="
   },
   "frame": {
     "version": "1",
-    "name": "ArcFlow Pro",
-    "description": "ArcFlow Pro dApp on Arc Testnet",
-    "iconUrl": "https://arcflow-router.vercel.app/logo.png",
-    "homeUrl": "https://arcflow-router.vercel.app",
-    "imageUrl": "https://arcflow-router.vercel.app/frame.png",
+    "name": "ArcFlow Router",
+    "description": "ArcFlow Router dApp on Arc Testnet",
+    "iconUrl": "https://arcflow-routerdapp.vercel.app/icon.png",
+    "homeUrl": "https://arcflow-routerdapp.vercel.app",
+    "imageUrl": "https://arcflow-routerdapp.vercel.app/image.png",
     "buttonTitle": "Open App",
-    "splashImageUrl": "https://arcflow-router.vercel.app/logo.png",
-    "splashBackgroundColor": "#0b0f1a",
-    "primaryCategory": "finance",
-    "webhookUrl": "https://arcflow-router.vercel.app/api/webhook"
+    "splashImageUrl": "https://arcflow-routerdapp.vercel.app/splash.png",
+    "splashBackgroundColor": "#eeccff",
+    "webhookUrl": "https://arcflow-routerdapp.vercel.app/api/webhook",
+    "primaryCategory": "finance"
   }
 }
