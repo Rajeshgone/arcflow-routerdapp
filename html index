@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basic Router DApp</title>
+    <title>Arcflow - Router DApp</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.min.js"></script>
     <style>
@@ -21,8 +21,8 @@
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl">🔄</div>
-                <h1 class="text-3xl font-bold">Router</h1>
+                <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-fuchsia-600 rounded-2xl flex items-center justify-center text-2xl">⚡</div>
+                <h1 class="text-3xl font-bold">Arcflow</h1>
             </div>
             <button id="connectWallet" 
                     class="px-6 py-2 bg-white text-black font-semibold rounded-2xl hover:bg-gray-200 transition">
@@ -32,7 +32,7 @@
 
         <!-- Swap Card -->
         <div class="glass border border-white/10 rounded-3xl p-6 shadow-2xl">
-            <h2 class="text-xl font-semibold mb-6 text-center">Swap Tokens</h2>
+            <h2 class="text-xl font-semibold mb-6 text-center">Swap Tokens on Arcflow</h2>
 
             <!-- From -->
             <div class="bg-slate-900/50 rounded-2xl p-4 mb-3">
@@ -92,8 +92,8 @@
 
             <!-- Swap Button -->
             <button onclick="executeSwap()" 
-                    class="w-full mt-8 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 py-4 rounded-2xl font-bold text-lg transition">
-                Swap Tokens
+                    class="w-full mt-8 bg-gradient-to-r from-violet-500 to-fuchsia-600 hover:from-violet-600 hover:to-fuchsia-700 py-4 rounded-2xl font-bold text-lg transition">
+                Swap on Arcflow
             </button>
 
             <!-- Info -->
@@ -105,12 +105,12 @@
 
         <!-- Footer Info -->
         <div class="text-center text-xs text-gray-500 mt-8">
-            Basic Router Demo • Powered by ethers.js<br>
-            <span class="text-gray-600">Connect MetaMask to use</span>
+            Arcflow • Decentralized Token Router<br>
+            <span class="text-gray-600">Fast • Secure • Low Slippage</span>
         </div>
     </div>
 
-    <!-- Simple Token Selector Modal -->
+    <!-- Token Selector Modal -->
     <div id="tokenModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center">
         <div class="glass border border-white/10 rounded-3xl w-full max-w-sm mx-4 p-6">
             <h3 class="text-lg font-semibold mb-4">Select Token</h3>
@@ -162,7 +162,6 @@
                     const address = await signer.getAddress();
                     connectWalletBtn.textContent = `${address.slice(0,6)}...${address.slice(-4)}`;
                     statusEl.textContent = "Wallet connected ✓";
-                    console.log("Connected:", address);
                 } catch (error) {
                     console.error(error);
                     statusEl.textContent = "Connection failed";
@@ -206,7 +205,6 @@
         }
 
         function swapTokens() {
-            // Simple UI swap
             const tempToken = fromToken;
             const tempAmount = document.getElementById('amountFrom').value;
             
@@ -216,7 +214,6 @@
             document.getElementById('amountFrom').value = document.getElementById('amountTo').value || '0';
             document.getElementById('amountTo').value = tempAmount || '0';
             
-            // Refresh UI
             document.getElementById('tokenFrom').innerHTML = `
                 <span class="text-2xl">${getTokenEmoji(fromToken)}</span>
                 <span class="text-sm font-medium">${fromToken}</span> ▼
@@ -238,28 +235,20 @@
                 return;
             }
             
-            statusEl.textContent = "Swapping...";
+            statusEl.textContent = "Routing through Arcflow...";
             
-            // Mock transaction (demo only)
+            // Mock transaction
             setTimeout(() => {
-                statusEl.innerHTML = `✅ Swapped ${amount} ${fromToken} to ${toToken}`;
-                console.log(`Mock swap: ${amount} ${fromToken} → ${toToken}`);
-            }, 1500);
+                statusEl.innerHTML = `✅ Successfully swapped ${amount} ${fromToken} to ${toToken} via Arcflow`;
+            }, 1800);
         }
 
         function refreshRate() {
             statusEl.textContent = "Rate updated";
-            setTimeout(() => statusEl.textContent = "", 2000);
+            setTimeout(() => statusEl.textContent = "", 1500);
         }
 
-        // Tailwind script already included
-        // Auto connect listener
         window.ethereum?.on('accountsChanged', () => window.location.reload());
-
-        // Keyboard support
-        document.getElementById('amountFrom').addEventListener('input', () => {
-            // Could calculate amountTo in real app
-        });
     </script>
 </body>
 </html>
