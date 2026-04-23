@@ -1,8 +1,8 @@
 {
   "accountAssociation": {
-    "header": "eyJmaWQiOjEyMzQ1NiwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweFlPVVJfV0FMTEVUX0FERFJFU1MifQ",
-    "payload": "eyJkb21haW4iOiJhcmNmbG93LXJvdXRlci52ZXJjZWwuYXBwIn0",
-    "signature": "REPLACE_WITH_REAL_SIGNATURE"
+    "header": "BASE64_HEADER",
+    "payload": "BASE64_PAYLOAD",
+    "signature": "BASE64_SIGNATURE"
   },
   "frame": {
     "version": "1",
