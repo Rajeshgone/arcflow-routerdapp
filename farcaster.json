@@ -1,0 +1,20 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjEyMzQ1NiwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweFlPVVJfV0FMTEVUX0FERFJFU1MifQ",
+    "payload": "eyJkb21haW4iOiJhcmNmbG93LXJvdXRlci52ZXJjZWwuYXBwIn0",
+    "signature": "REPLACE_WITH_REAL_SIGNATURE"
+  },
+  "frame": {
+    "version": "1",
+    "name": "ArcFlow Pro",
+    "description": "ArcFlow Pro dApp on Arc Testnet",
+    "iconUrl": "https://arcflow-router.vercel.app/logo.png",
+    "homeUrl": "https://arcflow-router.vercel.app",
+    "imageUrl": "https://arcflow-router.vercel.app/frame.png",
+    "buttonTitle": "Open App",
+    "splashImageUrl": "https://arcflow-router.vercel.app/logo.png",
+    "splashBackgroundColor": "#0b0f1a",
+    "primaryCategory": "finance",
+    "webhookUrl": "https://arcflow-router.vercel.app/api/webhook"
+  }
+}
